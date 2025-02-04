@@ -1,4 +1,4 @@
-// import { lookup } from 'mime-types'
+import { lookup } from 'mime-types'
 
 export default {
   async fetch(request, env): Promise<Response> {
@@ -6,24 +6,23 @@ export default {
     // should be fixed by https://community.cloudflare.com/t/content-encoding-working-on-http-but-not-https/87057
     // but I can't find that setting
 
-    // const acceptEncoding = request.headers.get('Accept-Encoding') || ''
-    // console.log('acceptEncoding', acceptEncoding)
-    // const url = new URL(request.url)
-    // if (url.pathname.includes('.') && /\bgzip\b/.test(acceptEncoding)) {
-    //   const contentType = lookup(url.pathname)
-    //   url.pathname = url.pathname + '.gz'
-    //   const r = await env.ASSETS.fetch(url, request)
-    //   console.log('contentType', contentType, r.status)
-    //   if (r.status == 200) {
-    //     return new Response(r.body, {
-    //       headers: {
-    //         'Content-Type': contentType || 'application/octet-stream',
-    //         'Content-Encoding': 'gzip',
-    //         'Access-Control-Allow-Origin': allowOrigin(request),
-    //       },
-    //     })
-    //   }
-    // }
+    const acceptEncoding = request.headers.get('Accept-Encoding') || ''
+    const url = new URL(request.url)
+    if (url.pathname.includes('.') && /\bgzip\b/.test(acceptEncoding)) {
+      const contentType = lookup(url.pathname)
+      url.pathname = url.pathname + '.gz'
+      const r = await env.ASSETS.fetch(url, request)
+      if (r.status == 200) {
+        return new Response(r.body, {
+          headers: {
+            'content-type': contentType || 'application/octet-stream',
+            'content-encoding': 'gzip',
+            'access-control-allow-origin': allowOrigin(request),
+          },
+          encodeBody: 'manual',
+        })
+      }
+    }
 
     const r = await env.ASSETS.fetch(request)
     if (r.status == 404) {
