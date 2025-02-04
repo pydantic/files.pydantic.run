@@ -1,0 +1,17 @@
+{
+  "name": "files-pydantic-run",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "cf-typegen": "wrangler types"
+  },
+  "dependencies": {
+    "@cloudflare/workers-types": "^4.20250129.0",
+    "@types/mime-types": "^2.1.4",
+    "mime-types": "^2.1.35",
+    "typescript": "^5.5.2",
+    "wrangler": "^3.107.2"
+  }
+}
